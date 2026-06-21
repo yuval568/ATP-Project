@@ -2,7 +2,6 @@
 <?import View.MazeDisplayer?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
@@ -10,7 +9,6 @@
 <?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 
@@ -21,19 +19,26 @@
       onKeyPressed="#keyPressed">
 
     <MenuBar>
-        <Menu text="File">
+        <Menu fx:id="menuFile" text="File" disable="true">
             <MenuItem text="New" onAction="#generateMaze"/>
             <MenuItem fx:id="menuSave" text="Save" onAction="#saveMaze" disable="true"/>
             <MenuItem text="Load" onAction="#loadMaze"/>
-            <MenuItem text="Properties" onAction="#showProperties"/>
-            <MenuItem text="Exit" onAction="#exitApplication"/>
         </Menu>
         <Menu text="Options">
+            <MenuItem text="Properties" onAction="#showProperties"/>
+            <MenuItem fx:id="menuSolve" text="Solve Maze" onAction="#solveMaze" disable="true"/>
+        </Menu>
+        <Menu fx:id="menuEffects" text="Effects" disable="true">
             <CheckMenuItem text="Fog of War" onAction="#toggleFogOfWar"/>
         </Menu>
         <Menu text="Help">
             <MenuItem text="Help" onAction="#showHelp"/>
+        </Menu>
+        <Menu text="About">
             <MenuItem text="About" onAction="#showAbout"/>
+        </Menu>
+        <Menu text="Exit">
+            <MenuItem text="Exit" onAction="#exitApplication"/>
         </Menu>
     </MenuBar>
 
@@ -55,38 +60,12 @@
         </VBox>
     </StackPane>
 
-    <!-- Main Game Screen (hidden initially) -->
     <BorderPane fx:id="gameScreen" VBox.vgrow="ALWAYS" visible="false" managed="false">
-        <left>
-            <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: #1a1a2e;">
-                <Label text="Maze Options" style="-fx-font-weight: bold; -fx-text-fill: white;"/>
-                <HBox spacing="5">
-                    <Label text="Rows:" style="-fx-text-fill: white;"/>
-                    <TextField fx:id="txtRows" text="15" prefWidth="50"/>
-                </HBox>
-                <HBox spacing="5">
-                    <Label text="Cols:" style="-fx-text-fill: white;"/>
-                    <TextField fx:id="txtCols" text="15" prefWidth="50"/>
-                </HBox>
-                <Button text="Generate Maze" onAction="#generateMaze" prefWidth="120"
-                        style="-fx-background-color: #f5c518; -fx-font-weight: bold;"/>
-                <Button fx:id="btnSolve" text="Solve Maze" onAction="#solveMaze" prefWidth="120" disable="true"
-                        style="-fx-background-color: #16213e; -fx-text-fill: white;"/>
-                <Button fx:id="btnSave" text="Save Maze" onAction="#saveMaze" prefWidth="120" disable="true"
-                        style="-fx-background-color: #16213e; -fx-text-fill: white;"/>
-                <Button text="Load Maze" onAction="#loadMaze" prefWidth="120"
-                        style="-fx-background-color: #16213e; -fx-text-fill: white;"/>
-            </VBox>
-        </left>
         <center>
-            <VBox alignment="CENTER" style="-fx-padding: 10;" BorderPane.alignment="CENTER">
-                <MazeDisplayer fx:id="mazeDisplayer"
-                               width="620"
-                               height="620"
-                               imageFileNameCharacter="/Images/messiPlayer.jpg"
-                               onMouseDragged="#mouseDragged"
-                               onScroll="#scrollZoom"/>
-            </VBox>
+            <MazeDisplayer fx:id="mazeDisplayer"
+                           imageFileNameCharacter="/Images/messiPlayer.jpg"
+                           onMouseDragged="#mouseDragged"
+                           onScroll="#scrollZoom"/>
         </center>
     </BorderPane>
 

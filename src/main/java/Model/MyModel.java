@@ -11,6 +11,9 @@ import java.io.*;
 import java.net.InetAddress;
 import java.util.Observable;
 import java.util.Observer;
+import IO.MyCompressorOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
 
 public class MyModel extends Observable implements IModel {
 
@@ -162,12 +165,18 @@ public class MyModel extends Observable implements IModel {
             case 3 -> { newRow++; newCol++; }
         }
 
+        boolean diagonal = (direction == 7 || direction == 9 || direction == 1 || direction == 3);
+
         if (newRow >= 0 && newRow < matrix.length && newCol >= 0 && newCol < matrix[0].length) {
             if (matrix[newRow][newCol] == 0) {
-                characterRow = newRow;
-                characterCol = newCol;
-                setChanged();
-                notifyObservers("character moved");
+                boolean canMove = !diagonal ||
+                        (matrix[newRow][characterCol] == 0 && matrix[characterRow][newCol] == 0);
+                if (canMove) {
+                    characterRow = newRow;
+                    characterCol = newCol;
+                    setChanged();
+                    notifyObservers("character moved");
+                }
             }
         }
     }
@@ -183,11 +192,43 @@ public class MyModel extends Observable implements IModel {
 
     @Override
     public void saveMaze(File file) {
-
+        if (maze == null) return;
+        try (FileOutputStream fos = new FileOutputStream(file);
+             OutputStream out = new MyCompressorOutputStream(fos)) {
+            out.write(maze.toByteArray());
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
     @Override
     public void loadMaze(File file) {
+        try {
+            byte[] compressed = new FileInputStream(file).readAllBytes();
 
+            // Read header first without decompressing
+            byte[] header = new byte[12];
+            System.arraycopy(compressed, 0, header, 0, 12);
+            int rows = ((header[1] & 0xFF) << 8) | (header[2] & 0xFF);
+            int cols = ((header[3] & 0xFF) << 8) | (header[4] & 0xFF);
+
+            System.out.println("rows=" + rows + " cols=" + cols);
+            System.out.println("compressed length=" + compressed.length);
+
+            byte[] decompressed = new byte[rows * cols + 12];
+            InputStream is = new MyDecompressorInputStream(new ByteArrayInputStream(compressed));
+            is.read(decompressed);
+
+            maze = new Maze(decompressed);
+            characterRow = maze.getStartPosition().getRowIndex();
+            characterCol = maze.getStartPosition().getColumnIndex();
+            solution = null;
+
+            setChanged();
+            notifyObservers("maze generated");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

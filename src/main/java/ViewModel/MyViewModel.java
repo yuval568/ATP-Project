@@ -78,4 +78,19 @@ public class MyViewModel extends Observable implements Observer {
             model.moveCharacter(direction);
         }
     }
+
+    public void moveCharacterByDirection(int direction) {
+        model.moveCharacter(direction);
+    }
+
+    public void saveMaze(java.io.File file) {
+        model.saveMaze(file);
+    }
+
+    public void loadMaze(java.io.File file) {
+        model.loadMaze(file);
+    }
+    public void shutDownServers() {
+        model.shutDownServers();
+    }
 }

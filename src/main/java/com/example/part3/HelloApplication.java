@@ -8,14 +8,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.application.Platform;
 
 public class HelloApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/MyView.fxml"));
-        Parent root = fxmlLoader.load();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/MyView.fxml"));        Parent root = fxmlLoader.load();
         MyViewController view = fxmlLoader.getController();
+        var url = HelloApplication.class.getResource("/View/MyView.fxml");
+        System.out.println("FXML URL: " + url);
 
         MyModel model = new MyModel();
         MyViewModel viewModel = new MyViewModel(model);
@@ -23,6 +25,11 @@ public class HelloApplication extends Application {
 
         primaryStage.setTitle("World Cup Maze Game 🏆⚽");
         primaryStage.setScene(new Scene(root, 750, 600));
+        primaryStage.setOnCloseRequest(event -> {
+            viewModel.shutDownServers();
+            Platform.exit();
+            System.exit(0);
+        });
         primaryStage.show();
     }
 
