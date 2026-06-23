@@ -9,9 +9,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class MazeDisplayer extends Canvas {
 
@@ -24,7 +26,7 @@ public class MazeDisplayer extends Canvas {
     private StringProperty imageFileNameGoal = new SimpleStringProperty();
     private StringProperty imageFileNameSolution = new SimpleStringProperty();
     private boolean redrawPending = false;
-
+    private Consumer<Integer> onMoveHandler;
     private Image wallImageCache;
     private Image goalImageCache;
     private Image characterImageCache;
@@ -49,12 +51,35 @@ public class MazeDisplayer extends Canvas {
                 redraw();
             }
         });
+
+        setFocusTraversable(true);
+        setOnKeyPressed(event -> {
+            int direction = keyToDirection(event.getCode());
+            if (direction != -1 && onMoveHandler != null) {
+                onMoveHandler.accept(direction);
+            }
+        });
     }
 
-    public Solution getSolution() {
-        return solution;
+    private int keyToDirection(KeyCode code) {
+        return switch (code) {
+            case UP, NUMPAD8 -> 8;
+            case DOWN, NUMPAD2 -> 2;
+            case LEFT, NUMPAD4 -> 4;
+            case RIGHT, NUMPAD6 -> 6;
+            case NUMPAD7 -> 7;
+            case NUMPAD9 -> 9;
+            case NUMPAD1 -> 1;
+            case NUMPAD3 -> 3;
+            default -> -1;
+        };
     }
 
+    public void setOnMove(Consumer<Integer> handler) {
+        this.onMoveHandler = handler;
+    }
+
+    public Solution getSolution() { return solution; }
     public Maze getMaze() { return maze; }
 
     public void drawBackground() {
@@ -147,7 +172,6 @@ public class MazeDisplayer extends Canvas {
         GraphicsContext gc = getGraphicsContext2D();
         gc.clearRect(0, 0, canvasWidth, canvasHeight);
 
-        // Load images once
         if (bgImageCache == null) bgImageCache = loadImage("/Images/pitch.jpg");
         if (wallImageCache == null) wallImageCache = loadImage(getImageFileNameWall());
         if (goalImageCache == null) goalImageCache = loadImage(getImageFileNameGoal());

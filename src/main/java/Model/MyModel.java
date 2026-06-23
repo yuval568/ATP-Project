@@ -130,6 +130,9 @@ public class MyModel extends Observable implements IModel {
                             toServer.flush();
 
                             solution = (Solution) fromServer.readObject();
+                            System.out.println("Client received solution. Steps: " + solution.getSolutionPath().size() +
+                                    " | Start: " + solution.getSolutionPath().get(0) +
+                                    " | End: " + solution.getSolutionPath().get(solution.getSolutionPath().size() -1 ));
 
                             setChanged();
                             notifyObservers("solution solved");

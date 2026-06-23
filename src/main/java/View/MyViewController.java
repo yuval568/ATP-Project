@@ -42,8 +42,7 @@ public class MyViewController implements IView, Observer {
         gameScreen.setManaged(true);
         mazeDisplayer.setFocusTraversable(true);
         mazeDisplayer.requestFocus();
-
-        gameScreen.widthProperty().addListener((obs, old, newVal) -> {
+        mazeDisplayer.setOnMove(direction -> viewModel.moveCharacterByDirection(direction));        gameScreen.widthProperty().addListener((obs, old, newVal) -> {
             mazeDisplayer.setWidth(newVal.doubleValue());
             mazeDisplayer.redraw();
         });

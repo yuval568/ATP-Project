@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
-    <Properties>
-        <Property name="basePath">./logs</Property>
-    </Properties>
-
     <Appenders>
-        <Console name="ConsoleAppender" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-        </Console>
-
-        <File name="GeneralFileAppender" fileName="${basePath}/server_general.log" append="true">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        <File name="FileAppender" fileName="logs/server.log" append="true">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
         </File>
+
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
+        </Console>
     </Appenders>
 
     <Loggers>
         <Root level="info">
+            <AppenderRef ref="FileAppender"/>
             <AppenderRef ref="ConsoleAppender"/>
-            <AppenderRef ref="GeneralFileAppender"/>
         </Root>
     </Loggers>
 </Configuration>
