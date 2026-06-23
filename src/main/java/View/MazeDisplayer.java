@@ -51,6 +51,10 @@ public class MazeDisplayer extends Canvas {
         });
     }
 
+    public Solution getSolution() {
+        return solution;
+    }
+
     public Maze getMaze() { return maze; }
 
     public void drawBackground() {
@@ -66,6 +70,8 @@ public class MazeDisplayer extends Canvas {
         this.fogOfWarEnabled = enabled;
         redraw();
     }
+
+    public boolean isFogOfWarEnabled() { return fogOfWarEnabled; }
 
     public void setMaze(Maze maze) {
         this.maze = maze;
@@ -83,7 +89,6 @@ public class MazeDisplayer extends Canvas {
         redraw();
     }
 
-    public boolean isFogOfWarEnabled() { return fogOfWarEnabled; }
     public String getImageFileNameWall() { return imageFileNameWall.get(); }
     public void setImageFileNameWall(String v) { imageFileNameWall.set(v); }
     public StringProperty imageFileNameWallProperty() { return imageFileNameWall; }
@@ -126,6 +131,7 @@ public class MazeDisplayer extends Canvas {
             drawMaze();
         });
     }
+
     private void drawMaze() {
         if (maze == null) return;
 
@@ -168,7 +174,7 @@ public class MazeDisplayer extends Canvas {
             }
         }
 
-        // Draw solution
+        // Draw solution — always visible regardless of fog
         if (solution != null) {
             ArrayList<AState> path = solution.getSolutionPath();
             for (AState state : path) {
@@ -178,7 +184,6 @@ public class MazeDisplayer extends Canvas {
                 int r = Integer.parseInt(parts[0]);
                 int c = Integer.parseInt(parts[1]);
 
-                if (fogOfWarEnabled && !isVisible(r, c)) continue;
                 if ((r == maze.getStartPosition().getRowIndex() && c == maze.getStartPosition().getColumnIndex()) ||
                         (r == maze.getGoalPosition().getRowIndex() && c == maze.getGoalPosition().getColumnIndex())) {
                     continue;
@@ -190,20 +195,10 @@ public class MazeDisplayer extends Canvas {
                 } else {
                     gc.drawImage(solutionImageCache, c * cellWidth, r * cellHeight, cellWidth, cellHeight);
                 }
-                if (fogOfWarEnabled) {
-                    for (int i = 0; i < rows; i++) {
-                        for (int j = 0; j < cols; j++) {
-                            if (!isVisible(i, j)) {
-                                gc.setFill(Color.color(0, 0, 0, 0.85));
-                                gc.fillRect(j * cellWidth, i * cellHeight, cellWidth, cellHeight);
-                            }
-                        }
-                    }
-                }
             }
         }
 
-        // Draw goal
+        // Draw goal (always visible)
         int goalRow = maze.getGoalPosition().getRowIndex();
         int goalCol = maze.getGoalPosition().getColumnIndex();
         if (goalImageCache == null) {
@@ -221,15 +216,16 @@ public class MazeDisplayer extends Canvas {
             gc.drawImage(characterImageCache, characterCol * cellWidth, characterRow * cellHeight, cellWidth, cellHeight);
         }
 
-        // Draw fog of war overlay
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (!isVisible(i, j)) {
-                    gc.setFill(Color.color(0, 0, 0, 0.85));
-                    gc.fillRect(j * cellWidth, i * cellHeight, cellWidth, cellHeight);
+        // Draw fog of war overlay — only if enabled
+        if (fogOfWarEnabled) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (!isVisible(i, j)) {
+                        gc.setFill(Color.color(0, 0, 0, 0.85));
+                        gc.fillRect(j * cellWidth, i * cellHeight, cellWidth, cellHeight);
+                    }
                 }
             }
         }
     }
-
-    }
+}

@@ -25,6 +25,7 @@ public class MyViewController implements IView, Observer {
     private MyViewModel viewModel;
     private MediaPlayer backgroundMusic;
     private MediaPlayer goalSound;
+    private boolean showSolution = false;
 
     public void setViewModel(MyViewModel viewModel) {
         this.viewModel = viewModel;
@@ -103,7 +104,13 @@ public class MyViewController implements IView, Observer {
 
     @FXML
     public void solveMaze() {
-        viewModel.solveMaze();
+        if (showSolution) {
+            showSolution = false;
+            mazeDisplayer.setSolution(null);
+        } else {
+            showSolution = true;
+            viewModel.solveMaze();
+        }
     }
 
     @FXML
@@ -277,7 +284,6 @@ public class MyViewController implements IView, Observer {
                 menuSave.setDisable(false);
                 menuSolve.setDisable(false);
                 mazeDisplayer.setFocusTraversable(true);
-                mazeDisplayer.requestFocus();
             }
 
             mazeDisplayer.setCharacterPosition(
@@ -285,8 +291,10 @@ public class MyViewController implements IView, Observer {
                     viewModel.getCharacterCol()
             );
 
-            if (viewModel.getSolution() != null) {
+            if (showSolution && viewModel.getSolution() != null) {
                 mazeDisplayer.setSolution(viewModel.getSolution());
+            } else if (!showSolution) {
+                mazeDisplayer.setSolution(null);
             }
 
             if (viewModel.getMaze() != null) {
