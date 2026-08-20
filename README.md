@@ -6,3 +6,4 @@
 - 💾 **Smart Solution Caching:** Persists and compresses computed maze solutions to disk, serving instant cached results for recurring queries.
 - 🎨 **Design Patterns & MVVM:** Built with Strategy (BFS/DFS/Best-First), Decorator (custom stream compression), Adapter, and Singleton patterns using JavaFX.
 - 🛠️ **Tech Stack:** Java 15, JavaFX 16, Maven, JUnit 5, and Log4j2.
+<img width="935" height="778" alt="Image" src="https://github.com/user-attachments/assets/9b3d97b3-55b8-4ae3-9760-907eee789472" />
